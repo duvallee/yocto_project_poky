@@ -19,9 +19,8 @@ SRC_URI = "${GNUPG_MIRROR}/${BPN}/${BPN}-${PV}.tar.bz2 \
 SRC_URI_append_class-native = " file://0001-configure.ac-use-a-custom-value-for-the-location-of-.patch \
                                 file://relocate.patch"
 
-
-SRC_URI[md5sum] = "563b959d0c3856e34526e9ca51c80d7b"
-SRC_URI[sha256sum] = "76c787a955f9e6e0ead47c9be700bfb9d454f955a7b7c7e697aa719bac7b11d8"
+SRC_URI[md5sum] = "1ba2d9b70c377f8e967742064c27a19c"
+SRC_URI[sha256sum] = "afa262868e39b651a2db4c071fba90415154243e83a830ca00516f9a807fd514"
 
 EXTRA_OECONF = "--disable-ldap \
 		--disable-ccid-driver \
