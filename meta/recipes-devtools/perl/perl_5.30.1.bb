@@ -27,6 +27,7 @@ SRC_URI = "https://www.cpan.org/src/5.0/perl-${PV}.tar.gz;name=perl \
            file://CVE-2020-10543.patch \
            file://CVE-2020-10878_1.patch \
            file://CVE-2020-10878_2.patch \
+           file://CVE-2020-12723.patch \
            "
 SRC_URI_append_class-native = " \
            file://perl-configpm-switch.patch \
@@ -145,8 +146,9 @@ do_install() {
     install lib/ExtUtils/typemap ${D}${libdir}/perl5/${PV}/ExtUtils/
 
     # Fix up shared library
-    rm ${D}/${libdir}/perl5/${PV}/*/CORE/libperl.so
-    ln -sf ../../../../libperl.so.${PERL_LIB_VER} $(echo ${D}/${libdir}/perl5/${PV}/*/CORE)/libperl.so
+    dir=$(echo ${D}/${libdir}/perl5/${PV}/*/CORE)
+    rm $dir/libperl.so
+    ln -sf ../../../../libperl.so.${PERL_LIB_VER} $dir/libperl.so
 }
 
 do_install_append_class-target() {
