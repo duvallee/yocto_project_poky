@@ -14,7 +14,7 @@ DEPENDS_append_class-nativesdk = " flex-nativesdk"
 ASNEEDED = ""
 
 S = "${WORKDIR}/git"
-SRC_URI = "git://github.com/unfs3/unfs3.git;protocol=https \
+SRC_URI = "git://github.com/unfs3/unfs3.git;protocol=https;branch=master \
            file://unfs3_parallel_build.patch \
            file://alternate_rpc_ports.patch \
            file://fix_pid_race_parent_writes_child_pid.patch \
@@ -36,7 +36,7 @@ BBCLASSEXTEND = "native nativesdk"
 inherit autotools
 EXTRA_OECONF_append_class-native = " --sbindir=${bindir}"
 CFLAGS_append = " -I${STAGING_INCDIR}/tirpc"
-LDFLAGS_append = " -ltirpc"
+EXTRA_OECONF_append = " LIBS=-ltirpc"
 
 # Turn off these header detects else the inode search
 # will walk entire file systems and this is a real problem
