@@ -448,7 +448,7 @@ class Tinfoil:
         self.run_actions(config_params)
         self.recipes_parsed = True
 
-    def run_command(self, command, *params):
+    def run_command(self, command, *params, handle_events=True):
         """
         Run a command on the server (as implemented in bb.command).
         Note that there are two types of command - synchronous and
@@ -465,7 +465,16 @@ class Tinfoil:
         commandline = [command]
         if params:
             commandline.extend(params)
-        result = self.server_connection.connection.runCommand(commandline)
+        try:
+            result = self.server_connection.connection.runCommand(commandline)
+        finally:
+            while handle_events:
+                event = self.wait_event()
+                if not event:
+                    break
+                if isinstance(event, logging.LogRecord):
+                    if event.taskpid == 0 or event.levelno > logging.INFO:
+                        self.logger.handle(event)
         if result[1]:
             raise TinfoilCommandFailed(result[1])
         return result[0]

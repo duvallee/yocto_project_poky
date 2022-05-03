@@ -52,7 +52,10 @@ SRC_URI = "${KERNELORG_MIRROR}/linux/bluetooth/bluez-${PV}.tar.xz \
            ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '', 'file://0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch', d)} \
            file://0001-tests-add-a-target-for-building-tests-without-runnin.patch \
            file://0001-test-gatt-Fix-hung-issue.patch \
+           file://CVE-2021-0129.patch \
            file://CVE-2021-3588.patch \
+          file://CVE-2021-3658.patch \
+           file://CVE-2022-0204.patch \
            "
 S = "${WORKDIR}/bluez-${PV}"
 

@@ -25,6 +25,7 @@ import subprocess
 import errno
 import re
 import datetime
+import gc
 import bb.server.xmlrpcserver
 from bb import daemonize
 from multiprocessing import queues
@@ -221,6 +222,7 @@ class ProcessServer(multiprocessing.Process):
                 try:
                     print("Running command %s" % command)
                     self.command_channel_reply.send(self.cooker.command.runCommand(command))
+                    print("Command Completed")
                 except Exception as e:
                    logger.exception('Exception in server main event loop running command %s (%s)' % (command, str(e)))
 
@@ -348,7 +350,12 @@ class ServerCommunicator():
             logger.info("No reply from server in 30s")
             if not self.recv.poll(30):
                 raise ProcessTimeout("Timeout while waiting for a reply from the bitbake server (60s)")
-        return self.recv.get()
+        ret, exc = self.recv.get()
+        # Should probably turn all exceptions in exc back into exceptions?
+        # For now, at least handle BBHandledException
+        if exc and "BBHandledException" in exc:
+            raise bb.BBHandledException()
+        return ret, exc
 
     def updateFeatureSet(self, featureset):
         _, error = self.runCommand(["setFeatures", featureset])
@@ -665,8 +672,10 @@ class ConnectionWriter(object):
 
     def send(self, obj):
         obj = multiprocessing.reduction.ForkingPickler.dumps(obj)
+        gc.disable()
         with self.wlock:
             self.writer.send_bytes(obj)
+        gc.enable()
 
     def fileno(self):
         return self.writer.fileno()

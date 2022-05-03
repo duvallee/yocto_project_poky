@@ -18,6 +18,7 @@ SRC_URI = "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${BPN}/${P
            file://0001-environment.mak-musl-based-systems-can-generate-shar.patch \
            file://0001-apt-1.2.12-Fix-musl-build.patch \
            file://0001-Include-array.h-for-std-array.patch \
+           file://CVE-2020-3810.patch \
            "
 SRC_URI[md5sum] = "d30eed9304e82ea8238c854b5c5a34d9"
 SRC_URI[sha256sum] = "03ded4f5e9b8d43ecec083704b2dcabf20c182ed382db9ac7251da0b0b038059"
@@ -35,6 +36,10 @@ do_configure_prepend() {
     rm -rf ${S}/buildlib/config.sub
     rm -rf ${S}/buildlib/config.guess
 }
+
+# there are code generation issues with some compilers in the SHA256 implementation
+# turn off strict-aliasing to avoid these issues
+CXXFLAGS:append = " -fno-strict-aliasing"
 
 USERADD_PACKAGES = "${PN}"
 USERADD_PARAM_${PN} = "--system --no-create-home --home-dir /nonexistent --shell /bin/false --user-group _apt"
